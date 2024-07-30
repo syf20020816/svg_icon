@@ -89,3 +89,33 @@ impl From<Z> for Command {
         Command::ClosePath(z)
     }
 }
+
+
+#[cfg(test)]
+mod test_command{
+    use nom::multi::many0;
+
+    use super::*;
+
+    #[test]
+    fn test1(){
+        assert_eq!(
+            Command::from_str("M 10 10"),
+            Ok((
+                "",
+                Command::MoveTo(M {
+                    x: 10.0,
+                    y: 10.0,
+                    relative: false,
+                })
+            ))
+        );
+    }
+
+    #[test]
+    fn test_full(){
+        let input = "M 10 10 L 20 20 C 30 30 40 40 50 50 Q 60 60 70 70 A 80 80 90 0 1 100 100 Z";
+        let (s, c) = many0(Command::from_str)(input).unwrap();
+        dbg!(s, c);
+    }
+}

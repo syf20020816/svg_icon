@@ -2,6 +2,8 @@ use std::fmt::Display;
 
 use nom::{branch::alt, character::complete::char};
 
+/// Z = closepath (close the path)
+/// if bool is true, it is a relative command
 #[derive(Debug, Clone, PartialEq)]
 pub struct Z(bool);
 
