@@ -1,5 +1,12 @@
 use nom::{
-    bytes::complete::{tag, take_until, take_while_m_n}, character::complete::{alphanumeric1, multispace0}, combinator::recognize, multi::many0, sequence::{delimited, pair, preceded}, IResult
+    bytes::complete::{tag, take_until, take_while_m_n},
+    character::complete::{alphanumeric1, multispace0, space1},
+    combinator::recognize,
+    multi::many0,
+    number::complete::float,
+    sequence::{delimited, pair, preceded, separated_pair},
+    IResult,
+    branch::alt,
 };
 
 /// ## normal parser for easy string and split string
@@ -33,7 +40,7 @@ pub fn parse_normal_key(input: &str) -> IResult<&str, &str> {
 
 #[allow(dead_code)]
 pub fn parse_property(input: &str) -> IResult<&str, (&str, &str)> {
-    let (input,  key) = parse_normal_key(input)?;
+    let (input, key) = parse_normal_key(input)?;
     let (input, value) = preceded(tag("="), parse_string)(input)?;
     Ok((input, (key, value)))
 }
@@ -43,9 +50,9 @@ pub fn parse_properties(input: &str) -> IResult<&str, Vec<(&str, &str)>> {
 }
 
 pub fn parse_string(input: &str) -> IResult<&str, &str> {
-    delimited(
-        tag("\""),
-        take_until("\""),
-        tag("\""),
-    )(input)
+    delimited(tag("\""), take_until("\""), tag("\""))(input)
+}
+
+pub fn point(input: &str) -> IResult<&str, (f32, f32)> {
+    trim(separated_pair(float, alt((tag(","), space1)), float))(input)
 }

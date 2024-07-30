@@ -31,13 +31,7 @@ pub enum Command {
 impl Command {
     pub fn from_str(s: &str) -> IResult<&str, Command>{
         todo!();
-        // let (s, c) = M::from_str(s).map(|(s, m)| (s, Command::MoveTo(m)))
-        //     .or_else(|_| LineTo::from_str(s).map(|(s, l)| (s, Command::LineTo(l))))
-        //     .or_else(|_| CubicBezier::from_str(s).map(|(s, c)| (s, Command::CubicBezier(c))))
-        //     .or_else(|_| QuadraticBezier::from_str(s).map(|(s, q)| (s, Command::QuadraticBezier(q))))
-        //     .or_else(|_| A::from_str(s).map(|(s, a)| (s, Command::EllipticalArc(a))))
-        //     .or_else(|_| Z::from_str(s).map(|(s, z)| (s, Command::ClosePath(z)))?; // ? is used to return early if the parser fails
-        // Ok((s, c))
+        
     }
 }
 
@@ -51,5 +45,41 @@ impl Display for Command {
             Command::EllipticalArc(a) => write!(f, "{}", a),
             Command::ClosePath(z) => write!(f, "{}", z),
         }
+    }
+}
+
+impl From<M> for Command {
+    fn from(m: M) -> Self {
+        Command::MoveTo(m)
+    }
+}
+
+impl From<LineTo> for Command {
+    fn from(l: LineTo) -> Self {
+        Command::LineTo(l)
+    }
+}
+
+impl From<CubicBezier> for Command {
+    fn from(c: CubicBezier) -> Self {
+        Command::CubicBezier(c)
+    }
+}
+
+impl From<QuadraticBezier> for Command {
+    fn from(q: QuadraticBezier) -> Self {
+        Command::QuadraticBezier(q)
+    }
+}
+
+impl From<A> for Command {
+    fn from(a: A) -> Self {
+        Command::EllipticalArc(a)
+    }
+}
+
+impl From<Z> for Command {
+    fn from(z: Z) -> Self {
+        Command::ClosePath(z)
     }
 }

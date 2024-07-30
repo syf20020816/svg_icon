@@ -1,6 +1,6 @@
 use std::fmt::Display;
 
-use crate::parser::trim;
+use crate::parser::{point, trim};
 use nom::branch::alt;
 use nom::character::complete::space1;
 use nom::combinator::map;
@@ -83,7 +83,7 @@ impl L {
     pub fn from_str(s: &str) -> nom::IResult<&str, L> {
         let (s, (relative, (x, y))) = trim(pair(
             trim(alt((tag("l"), tag("L")))),
-            trim(separated_pair(float, alt((tag(","), space1)), float)),
+            point,
         ))(s)?;
 
         Ok((
