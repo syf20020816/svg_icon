@@ -1,0 +1,12 @@
+[package]
+name = "svg_icon"
+version = "0.1.0"
+edition = "2021"
+description = "svg icon parser use nom"
+authors = ["syf20020816@outlook.com"]
+license = "MIT"
+repository = "https://github.com/syf20020816/svg_icon"
+keywords = ["svg", "icon", "parser"]
+
+[dependencies]
+nom = "7.1.3"
