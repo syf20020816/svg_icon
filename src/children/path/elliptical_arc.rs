@@ -2,7 +2,7 @@ use std::fmt::Display;
 
 use crate::parser::{bool_flag, point, trim};
 use nom::branch::alt;
-use nom::combinator::map;
+
 use nom::{bytes::complete::tag, number::complete::float, sequence::pair};
 
 /// Draw an Arc curve from the current point to the coordinate x,y.

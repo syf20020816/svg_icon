@@ -2,15 +2,10 @@ use std::fmt::Display;
 
 use crate::parser::{point, trim};
 use nom::branch::alt;
-use nom::character::complete::space1;
+
 use nom::combinator::map;
-use nom::sequence::separated_pair;
-use nom::{
-    bytes::complete::tag, character::complete::one_of, combinator::recognize,
-    number::complete::float, sequence::pair,
-};
 
-
+use nom::{bytes::complete::tag, number::complete::float, sequence::pair};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum LineTo {
@@ -38,7 +33,6 @@ impl LineTo {
             map(V::from_str, |v| v.into()),
         ))(s)
     }
-    
 }
 
 impl From<L> for LineTo {
@@ -81,10 +75,7 @@ impl Display for L {
 
 impl L {
     pub fn from_str(s: &str) -> nom::IResult<&str, L> {
-        let (s, (relative, (x, y))) = trim(pair(
-            trim(alt((tag("l"), tag("L")))),
-            point,
-        ))(s)?;
+        let (s, (relative, (x, y))) = trim(pair(trim(alt((tag("l"), tag("L")))), point))(s)?;
 
         Ok((
             s,
@@ -211,7 +202,7 @@ mod test_line_to {
         );
     }
     #[test]
-    fn test_l(){
+    fn test_l() {
         assert_eq!(
             L::from_str("L10 20"),
             Ok((

@@ -1,8 +1,8 @@
 use std::fmt::Display;
 
-use nom::IResult;
-
 use super::{CubicBezier, LineTo, QuadraticBezier, A, M, Z};
+use nom::branch::alt;
+use nom::{combinator::map, IResult};
 
 /// Required. A set of commands which define the path.
 ///
@@ -29,9 +29,15 @@ pub enum Command {
 }
 
 impl Command {
-    pub fn from_str(s: &str) -> IResult<&str, Command>{
-        todo!();
-        
+    pub fn from_str(s: &str) -> IResult<&str, Command> {
+        alt((
+            map(M::from_str, |v| v.into()),
+            map(LineTo::from_str, |v| v.into()),
+            map(CubicBezier::from_str, |v| v.into()),
+            map(QuadraticBezier::from_str, |v| v.into()),
+            map(A::from_str, |v| v.into()),
+            map(Z::from_str, |v| v.into()),
+        ))(s)
     }
 }
 
