@@ -2,10 +2,15 @@ use std::fmt::Display;
 
 use crate::parser::trim;
 use nom::branch::alt;
+use nom::character::complete::space1;
+use nom::combinator::map;
+use nom::sequence::separated_pair;
 use nom::{
     bytes::complete::tag, character::complete::one_of, combinator::recognize,
     number::complete::float, sequence::pair,
 };
+
+
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum LineTo {
@@ -21,6 +26,36 @@ impl Display for LineTo {
             LineTo::H(h) => write!(f, "{}", h),
             LineTo::V(v) => write!(f, "{}", v),
         }
+    }
+}
+
+impl LineTo {
+    pub fn from_str(s: &str) -> nom::IResult<&str, LineTo> {
+        alt((
+            // L::from_str, H::from_str, V::from_str
+            map(L::from_str, |v| v.into()),
+            map(H::from_str, |v| v.into()),
+            map(V::from_str, |v| v.into()),
+        ))(s)
+    }
+    
+}
+
+impl From<L> for LineTo {
+    fn from(l: L) -> Self {
+        LineTo::L(l)
+    }
+}
+
+impl From<H> for LineTo {
+    fn from(h: H) -> Self {
+        LineTo::H(h)
+    }
+}
+
+impl From<V> for LineTo {
+    fn from(v: V) -> Self {
+        LineTo::V(v)
     }
 }
 
@@ -44,6 +79,24 @@ impl Display for L {
     }
 }
 
+impl L {
+    pub fn from_str(s: &str) -> nom::IResult<&str, L> {
+        let (s, (relative, (x, y))) = trim(pair(
+            trim(alt((tag("l"), tag("L")))),
+            trim(separated_pair(float, alt((tag(","), space1)), float)),
+        ))(s)?;
+
+        Ok((
+            s,
+            L {
+                x,
+                y,
+                relative: relative == "l",
+            },
+        ))
+    }
+}
+
 /// H = horizontal lineto (create a horizontal line)
 #[derive(Debug, Clone, PartialEq)]
 pub struct H {
@@ -54,6 +107,20 @@ pub struct H {
 impl Display for H {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{} {}", if self.relative { "h" } else { "H" }, self.x)
+    }
+}
+
+impl H {
+    pub fn from_str(s: &str) -> nom::IResult<&str, H> {
+        let (s, (relative, x)) = trim(pair(trim(alt((tag("h"), tag("H")))), float))(s)?;
+
+        Ok((
+            s,
+            H {
+                x,
+                relative: relative == "h",
+            },
+        ))
     }
 }
 
@@ -85,33 +152,87 @@ impl V {
 }
 
 #[cfg(test)]
-mod test_line_to{
+mod test_line_to {
+    use nom::multi::many0;
+
     use super::*;
     #[test]
     fn test_line_to() {
+        let input = "L 90,90 V 10 H 50";
+        let (s, l) = many0(LineTo::from_str)(input).unwrap();
+        dbg!(s, l);
+    }
+
+    #[test]
+    fn test_v() {
         assert_eq!(
-            LineTo::L(L { x: 10.0, y: 20.0, relative: false }).to_string(),
-            "L 10,20"
+            V::from_str("V 10"),
+            Ok((
+                "",
+                V {
+                    y: 10.0,
+                    relative: false
+                }
+            ))
         );
         assert_eq!(
-            LineTo::L(L { x: 10.0, y: 20.0, relative: true }).to_string(),
-            "l 10,20"
+            V::from_str("v -10"),
+            Ok((
+                "",
+                V {
+                    y: -10.0,
+                    relative: true
+                }
+            ))
+        );
+    }
+
+    #[test]
+    fn test_h() {
+        assert_eq!(
+            H::from_str("H 10"),
+            Ok((
+                "",
+                H {
+                    x: 10.0,
+                    relative: false
+                }
+            ))
         );
         assert_eq!(
-            LineTo::H(H { x: 10.0, relative: false }).to_string(),
-            "H 10"
+            H::from_str("h -10"),
+            Ok((
+                "",
+                H {
+                    x: -10.0,
+                    relative: true
+                }
+            ))
+        );
+    }
+    #[test]
+    fn test_l(){
+        assert_eq!(
+            L::from_str("L10 20"),
+            Ok((
+                "",
+                L {
+                    x: 10.0,
+                    y: 20.0,
+                    relative: false
+                }
+            ))
         );
         assert_eq!(
-            LineTo::H(H { x: 10.0, relative: true }).to_string(),
-            "h 10"
-        );
-        assert_eq!(
-            LineTo::V(V { y: 10.0, relative: false }).to_string(),
-            "V 10"
-        );
-        assert_eq!(
-            LineTo::V(V { y: 10.0, relative: true }).to_string(),
-            "v 10"
+            L::from_str("l -10,20"),
+            Ok((
+                "",
+                L {
+                    x: -10.0,
+                    y: 20.0,
+                    relative: true
+                }
+            ))
         );
     }
 }
