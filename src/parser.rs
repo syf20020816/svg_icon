@@ -1,12 +1,5 @@
 use nom::{
-    bytes::complete::{tag, take_until, take_while_m_n},
-    character::complete::{alphanumeric1, multispace0, space1},
-    combinator::recognize,
-    multi::many0,
-    number::complete::float,
-    sequence::{delimited, pair, preceded, separated_pair},
-    IResult,
-    branch::alt,
+    branch::alt, bytes::complete::{tag, take_until, take_while_m_n}, character::complete::{alphanumeric1, multispace0, space1}, combinator::{map, recognize}, multi::many0, number::complete::float, sequence::{delimited, pair, preceded, separated_pair}, IResult
 };
 
 /// ## normal parser for easy string and split string
@@ -55,4 +48,8 @@ pub fn parse_string(input: &str) -> IResult<&str, &str> {
 
 pub fn point(input: &str) -> IResult<&str, (f32, f32)> {
     trim(separated_pair(float, alt((tag(","), space1)), float))(input)
+}
+
+pub fn bool_flag(input: &str) -> IResult<&str, bool> {
+    map(trim(alt((tag("0"), tag("1")))), |v| v == "1")(input)
 }
