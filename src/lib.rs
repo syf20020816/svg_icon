@@ -174,12 +174,12 @@ mod test_svg {
             r##"<?xml version="1.0" encoding="UTF-8"?><svg width="24" height="24" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24 19V4" stroke="#008000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 22L24 19L36 16" stroke="#008000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M28 30L36 16" stroke="#008000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M44 30L36 16" stroke="#008000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 36L12 22" stroke="#008000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 36L12 22" stroke="#008000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12 44C16.4183 44 20 40.4183 20 36H4C4 40.4183 7.58172 44 12 44Z" fill="#008000" stroke="#008000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/><path fill-rule="evenodd" clip-rule="evenodd" d="M36 38C40.4183 38 44 34.4183 44 30H28C28 34.4183 31.5817 38 36 38Z" fill="#008000" stroke="#008000" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>"##
         };
         dbg!(svg);
-        // let svg =
-        //     Svg::from_path("E:/Rust/try/makepad/Gen-UI/gen/middleware/svg_icon/a.svg").unwrap();
-        // dbg!(svg.to_string());
-        // dbg!(svg);
-        // let svg_str = r#"<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="none"></svg>"#;
-        // let svg2: Svg = svg_str.parse().unwrap();
-        // dbg!(svg2);
+        let svg =
+            Svg::from_path("E:/Rust/try/makepad/Gen-UI/gen/middleware/svg_icon/a.svg").unwrap();
+        dbg!(svg.to_string());
+        dbg!(svg);
+        let svg_str = r#"<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100" fill="none"></svg>"#;
+        let svg2: Svg = svg_str.parse().unwrap();
+        dbg!(svg2);
     }
 }
